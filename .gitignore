@@ -6,10 +6,3 @@ node_modules/
 out/
 build/
 
-# Variáveis de Ambiente (EXTREMAMENTE IMPORTANTE)
-.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
