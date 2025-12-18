@@ -1,33 +1,31 @@
-// app/page.js - Server Component
-
-// Importação ajustada, assumindo que lib/data está na raiz do projeto
-import { getQuizQuestions } from '../app/lib/data'; 
+import { getQuizQuestions } from './lib/data'; 
 import Quiz from '../components/Quiz';
-import LayoutAdmin from '../components/LayoutAdmin'; // Componente de Layout
+import LayoutAdmin from '../components/LayoutAdmin'; 
 import { Suspense } from 'react';
 
-// O Server Component busca os dados
+// Garante que a página sempre busque dados novos do banco
+export const dynamic = 'force-dynamic';
+
 export default async function QuizPage() {
-  // 1. Data Fetching (Server-Side)
+  // Busca as perguntas no servidor
   const questions = await getQuizQuestions();
 
-  if (questions.length === 0) {
+  // Tratamento caso o banco esteja vazio
+  if (!questions || questions.length === 0) {
     return (
-      <main className="container">
-        <h1>Quiz App</h1>
-        <p>Nenhuma pergunta encontrada no banco de dados.</p>
-      </main>
+      <LayoutAdmin>
+        <div className="flex justify-center items-center h-full">
+          <p className="text-gray-500">Nenhuma pergunta disponível no momento.</p>
+        </div>
+      </LayoutAdmin>
     );
   }
 
-  // 2. Renderização do Layout e do Quiz
-  // O <LayoutAdmin> pode ser um Server Component ou um Client Component,
-  // mas como ele envolve o <Quiz> (que é 'use client'),
-  // ele deve receber os props do servidor (initialQuestions) e repassá-los.
   return (
-    <main className="flex justify-center bg-white w-screen h-screen">
-      <Suspense fallback={<div>Carregando Layout...</div>}>
+    <main className="flex justify-center items-center bg-white w-screen h-screen">
+      <Suspense fallback={<div className="text-2xl">Carregando Quiz...</div>}>
         <LayoutAdmin>
+          {/* O Quiz recebe as perguntas via Props */}
           <Quiz initialQuestions={questions} />
         </LayoutAdmin>
       </Suspense>
